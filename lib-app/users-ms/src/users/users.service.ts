@@ -13,7 +13,9 @@ export class UsersService extends PrismaClient implements OnModuleInit {
   }
 
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return this.user.create({
+      data: createUserDto
+    });
   }
 
   findAll() {
