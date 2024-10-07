@@ -12,8 +12,8 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true,
     })
-   );
-   
+  );
+
   await app.listen( envs.port );
   logger.log(`App running on port ${ envs.port }`)
 }

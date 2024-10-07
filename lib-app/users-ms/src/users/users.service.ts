@@ -6,7 +6,8 @@ import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class UsersService extends PrismaClient implements OnModuleInit {
 
-  private readonly logger = new Logger('UsersService')
+  private readonly logger = new Logger('UsersService');
+
   onModuleInit() {
     this.$connect();
     this.logger.log('Database connected');
@@ -19,11 +20,13 @@ export class UsersService extends PrismaClient implements OnModuleInit {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.user.findMany({});
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.user.findUnique({
+      where: {id}
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
