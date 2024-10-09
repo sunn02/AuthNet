@@ -30,11 +30,12 @@ export class UsersService extends PrismaClient implements OnModuleInit {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    const { id: __, ...data } = updateUserDto;
     //En caso que el usuario no exista
     await this.findOne(id);
 
     return this.user.update({
-      where: {id},
+      where: { id },
       data: updateUserDto,     
     });
   }
