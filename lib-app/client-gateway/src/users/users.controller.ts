@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PRODUCT_SERVICE } from 'src/config';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -9,8 +11,8 @@ export class UsersController {
   ) {}
 
   @Post()
-  createUser(){
-    return 'Crea un producto';
+  createUser( @Body() createUserDto: CreateUserDto ){
+    return this.usersClient.send({cmd: 'create_user'}, createUserDto);
   }
 
   @Get()
@@ -25,14 +27,16 @@ export class UsersController {
 
   @Delete(':id')
   deleteUser(@Param('id') id: string ){
-    return 'Elimina el usuario ' + id;
+    return this.usersClient.send({ cmd: 'delete_user' }, { id });
   }
 
   @Patch(':id')
   updateUser(
-    @Param('id') id: string,
-    @Body() body: any){
-    return 'Actualiza el usuario ' + id;
-  }
-
+    @Param('id', ParseIntPipe ) id: number,
+    @Body() updateUserDto: UpdateUserDto){
+      return this.usersClient.send({ cmd: 'update_user'}, { 
+        id,
+        ...updateUserDto
+      });
+    }
 }

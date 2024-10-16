@@ -1,7 +1,7 @@
 import { Controller, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from '../../../client-gateway/src/users/dto/create-user.dto';
+import { UpdateUserDto } from '../../../client-gateway/src/users/dto/update-user.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('users')

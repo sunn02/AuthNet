@@ -1,7 +1,8 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { CreateUserDto } from '../../../client-gateway/src/users/dto/create-user.dto';
+import { UpdateUserDto } from '../../../client-gateway/src/users/dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService extends PrismaClient implements OnModuleInit {
@@ -23,15 +24,26 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     return this.user.findMany({});
   }
 
-  findOne(id: number) {
-    return this.user.findUnique({
-      where: {id}
+  async findOne(id: number) {
+    const user = await this.user.findFirst({
+      where: { id }
     });
+    
+    if ( !user ){
+      throw new RpcException({
+          message:`Product with id #${ id } not found`,
+          status: HttpStatus.BAD_REQUEST
+      });
+    }
+
+    return user;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+
     const { id: __, ...data } = updateUserDto;
     //En caso que el usuario no exista
+
     await this.findOne(id);
 
     return this.user.update({
