@@ -11,8 +11,8 @@ interface EnvVars {
 
 const envsSchema = joi.object({
     PORT: joi.number().required(),
-    USERS_MICROSERVICE_HOST: joi.string().required,
-    USERS_MICROSERVICE_PORT: joi.number().required,
+    USERS_MICROSERVICE_HOST: joi.string().required(),
+    USERS_MICROSERVICE_PORT: joi.number().required(),
 })
 
 .unknown(true);
@@ -20,7 +20,7 @@ const envsSchema = joi.object({
 const { error, value} = envsSchema.validate(process.env);
 
 if ( error ) {
-    throw new Error(`Congig validation error: ${ error.message }`);
+    throw new Error(`Config validation error: ${ error.message }`);
 }
 
 const envVars : EnvVars = value;

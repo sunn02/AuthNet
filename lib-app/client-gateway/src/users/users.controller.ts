@@ -1,8 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { PRODUCT_SERVICE } from 'src/config';
 
 @Controller('users')
 export class UsersController {
-  constructor() {}
+  constructor(
+    @Inject(PRODUCT_SERVICE) private readonly usersClient:ClientProxy
+  ) {}
 
   @Post()
   createUser(){
@@ -11,12 +15,12 @@ export class UsersController {
 
   @Get()
   findAllUsers(){
-    return 'Regresa usuarios';
+    return this.usersClient.send({ cmd: 'find_all'}, { });
   }
   
   @Get(':id')
   findOne(@Param('id') id: string ){
-    return 'Regresa el usuario ' + id;
+    return this.usersClient.send({ cmd: 'find_one'}, { id });
   }
 
   @Delete(':id')
