@@ -39,6 +39,6 @@ export class UsersController {
   // @Delete(':id')
   @MessagePattern({ cmd: 'delete_user'})
   remove(@Payload('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 }
