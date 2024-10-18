@@ -5,10 +5,11 @@ import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-
-  @HttpCode(HttpStatus.OK)
+  
+  // console.log('ENtrando al post');
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.name, signInDto.password);
+  @HttpCode(HttpStatus.OK)
+  signIn(@Body() body: { name: string; password: string}) {
+    return this.authService.signIn(body.name, body.password);
   }
 }

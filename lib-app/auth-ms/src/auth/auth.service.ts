@@ -15,14 +15,18 @@ export class AuthService {
     private jwtService: JwtService) {}
 
   async signIn(
-    name: string, 
-    pass: string)
-    :Promise<any> {
+    name: string, password: string):Promise<any> {
+    console.log('Iniciando sesión para:', name);
+    
     const user = await this.usersService.findOne(name);
-    if (user?.password !== pass) {
+    console.log('Usuario encontrado:', user);
+
+    if (user?.password !== password) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, username: user.name };
+
+    const payload = { sub: user.id, name: user.name };
+    
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
