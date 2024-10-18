@@ -24,14 +24,14 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     return this.user.findMany({});
   }
 
-  async findOne(id: number) {
+  async findOne(name: string) {
     const user = await this.user.findFirst({
-      where: { id }
+      where: { name }
     });
     
     if ( !user ){
       throw new RpcException({
-          message:`Product with id #${ id } not found`,
+          message:`Product with name #${ name } not found`,
           status: HttpStatus.BAD_REQUEST
       });
     }
@@ -39,24 +39,24 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(name: string, updateUserDto: UpdateUserDto) {
 
-    const { id: __, ...data } = updateUserDto;
+    const { name: __, ...data } = updateUserDto;
     //En caso que el usuario no exista
 
-    await this.findOne(id);
+    await this.findOne(name);
 
     return this.user.update({
-      where: { id },
+      where: { name },
       data: updateUserDto,     
     });
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(name: string) {
+    await this.findOne(name);
     
     return this.user.delete({
-      where: {id}
+      where: {name}
     });
   }
 }

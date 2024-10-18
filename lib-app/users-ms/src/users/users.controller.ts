@@ -1,4 +1,4 @@
-import { Controller, ParseIntPipe } from '@nestjs/common';
+import { Controller} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from '../../../client-gateway/src/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../../client-gateway/src/users/dto/update-user.dto';
@@ -22,8 +22,8 @@ export class UsersController {
 
   // @Get(':id')
   @MessagePattern({ cmd: 'find_one'})
-  findOne(@Payload('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(+id);
+  findOne(@Payload('name') name: string) {
+    return this.usersService.findOne(name);
   }
 
   // @Patch(':id')
@@ -33,12 +33,12 @@ export class UsersController {
     // @Body() updateUserDto: UpdateUserDto) {
     @Payload() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(updateUserDto.id, updateUserDto);
+    return this.usersService.update(updateUserDto.name, updateUserDto);
   }
 
   // @Delete(':id')
   @MessagePattern({ cmd: 'delete_user'})
-  remove(@Payload('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(id);
+  remove(@Payload('name') name: string) {
+    return this.usersService.remove( name );
   }
 }

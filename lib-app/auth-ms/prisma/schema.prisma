@@ -13,11 +13,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id Int    @id @default(autoincrement())
-  name String @unique
-  password String
 
-  createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+model Token {
+  id        String   @id @default(uuid())
+  token     String               // El token en sí, como un JWT
+  expiresAt DateTime             // Fecha de expiración del token
+  userId    String               // ID del usuario asociado, referencia cruzada al microservicio de usuario
 }
