@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CreateUserDto } from '../../../client-gateway/src/users/dto/create-user.dto';
-import { UpdateUserDto } from '../../../client-gateway/src/users/dto/update-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import { RpcException } from '@nestjs/microservices';
 
