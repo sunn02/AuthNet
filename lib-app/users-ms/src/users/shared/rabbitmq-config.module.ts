@@ -1,3 +1,4 @@
+// shared/rabbitmq-config.module.ts
 import { Module } from '@nestjs/common';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
@@ -7,22 +8,13 @@ import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
       uri: 'amqp://rabbitmq:rabbitmq@localhost:5672',
       exchanges: [
         {
-          name: 'auth_exchange',
+          name: 'exchange1',
           type: 'topic',
         },
       ],
-      channels: {
-        'auth_channel': {
-          prefetchCount: 5,
-          default: true,
-        },
-      },
+      connectionInitOptions: { wait: false },
     }),
   ],
+  exports: [RabbitMQModule], // Exportamos para que otros módulos puedan usar RabbitMQModule
 })
-export class AppModule {}
-
-
-
-
-
+export class RabbitMQConfigModule {}

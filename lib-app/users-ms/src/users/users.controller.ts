@@ -8,38 +8,36 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  // @MessagePattern({ cmd: 'create_user'}) 
+  // @Post()
+  @MessagePattern({ cmd: 'create_user'}) 
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  // @MessagePattern({ cmd: 'find_all'})
+  // @Get()
+  @MessagePattern({ cmd: 'find_all'})
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':name')
+  // @Get(':name')
   // @Get(':id')
-  // @MessagePattern({ cmd: 'find_one'})
+  @MessagePattern({ cmd: 'find_one'})
   findOne(@Payload('name') name: string) {
     return this.usersService.findOne(name);
   }
 
-  @Patch(':name')
+  // @Patch(':name')
   // @Patch(':id')
-  // @MessagePattern({ cmd: 'update_user'})
-  update(
-    // @Param('id', ParseIntPipe) id: number, 
-    @Body() updateUserDto: UpdateUserDto) {
-    // @Payload() updateUserDto: UpdateUserDto,) {
+  @MessagePattern({ cmd: 'update_user'})
+  update(@Payload() updateUserDto: UpdateUserDto,){
+    // @Param('id', ParseIntPipe) id: number,
     return this.usersService.update(updateUserDto.name, updateUserDto);
   }
 
-  @Delete(':name')
+  // @Delete(':name')
   // @Delete(':id')
-  // @MessagePattern({ cmd: 'delete_user'})
+  @MessagePattern({ cmd: 'delete_user'})
   remove(@Payload('name') name: string) {
     return this.usersService.remove( name );
   }

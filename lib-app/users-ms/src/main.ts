@@ -16,7 +16,6 @@ async function bootstrap() {
 
   await app.listen(3001);
 
-  // await app.startAllMicroservices(); ---> Iniciar todos los microservicios
   logger.log(`Users Microservice running on port ${ envs.port }`)
 }
 bootstrap();
