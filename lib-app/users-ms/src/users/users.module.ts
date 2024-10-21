@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { UsersMessagingService } from './shared/user-messaging.service';
-import { RabbitMQConfigModule } from './shared/rabbitmq-config.module';
+import { UsersService } from './users.service'; 
+import { NatsConfigModule } from './shared/nats-config.module'; 
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, UsersMessagingService],
+  providers: [UsersService],
   imports: [
-    RabbitMQConfigModule, 
+    NatsConfigModule, 
   ],
   exports: [UsersService],
 })

@@ -4,7 +4,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaClient } from '@prisma/client';
 import { RpcException } from '@nestjs/microservices';
 import CircuitBreaker = require('opossum');
-import { UsersMessagingService } from './shared/user-messaging.service';
 
 @Injectable()
 export class UsersService extends PrismaClient implements OnModuleInit {
@@ -12,7 +11,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
   private readonly logger = new Logger('UsersService');
   private breaker: CircuitBreaker;
 
-  constructor(private readonly usersMessagingService: UsersMessagingService) {
+  constructor() {
     super();
   }
 
@@ -37,7 +36,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       data: createUserDto
     });
 
-    await this.usersMessagingService.publishUserCreated(user);
+    this.logger.log(`Usuario creado: ${JSON.stringify(user)}`);
     return user;
   }
 

@@ -1,26 +1,16 @@
 import { Module } from '@nestjs/common';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { NatsConfigModule } from './users/shared/nats-config.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    RabbitMQModule.forRoot(RabbitMQModule, {
-      uri: 'amqp://rabbitmq:rabbitmq@localhost:5672',
-      exchanges: [
-        {
-          name: 'auth_exchange',
-          type: 'topic',
-        },
-      ],
-      channels: {
-        'auth_channel': {
-          prefetchCount: 5,
-          default: true,
-        },
-      },
-    }),
+    NatsConfigModule,
+    UsersModule, // Asegúrate de importar el módulo de usuarios
   ],
 })
 export class AppModule {}
+
+
 
 
 

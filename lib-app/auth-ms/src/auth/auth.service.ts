@@ -7,14 +7,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../../../users-ms/src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { NatsService } from './shared/nats.service'; 
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private amqpConnection: AmqpConnection,) {}
+    private natsService: NatsService,) {}
 
   async signIn(
     name: string, password: string):Promise<any> {
@@ -26,7 +26,8 @@ export class AuthService {
     if (user?.password !== password) {
       throw new UnauthorizedException();
     }
-    await this.amqpConnection.publish('exchange1', 'user.signedIn', { name });
+
+    await this.natsService.publish('user.signedIn', { name });
 
     const payload = { sub: user.id, name: user.name };
     

@@ -17,8 +17,13 @@ async function bootstrap() {
   const logger = new Logger('Main');
   const port = 3002
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true}))
+
+  app.useGlobalPipes(new ValidationPipe({ 
+    whitelist: true, 
+    forbidNonWhitelisted: true}));
+
   await app.listen(port);
+  
   logger.log(`Auth Microservice running on port ${ port }`);
 }
 bootstrap();
