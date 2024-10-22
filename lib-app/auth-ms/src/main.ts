@@ -11,19 +11,28 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 
 async function bootstrap() {
   const logger = new Logger('Main');
-  const port = 3002
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
     forbidNonWhitelisted: true}));
 
-  await app.listen(port);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      url: 'nats://localhost:4222',  
+    },
+  });
+
+  await app.startAllMicroservices();
+
+  await app.listen(3002);
   
-  logger.log(`Auth Microservice running on port ${ port }`);
+  logger.log(`Auth Microservice running on port 3002`);
 }
 bootstrap();

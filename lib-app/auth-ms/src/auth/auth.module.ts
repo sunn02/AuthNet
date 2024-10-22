@@ -3,20 +3,26 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { NatsService } from './shared/nats.service';
-import { UsersModule } from '../../../users-ms/src/users/users.module'; 
-import { NatsConfigModule } from '../../../users-ms/src/users/shared/nats-config.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
-    UsersModule, JwtModule.register({
+    JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '60s' },
     }),
-    NatsConfigModule,
+    ClientsModule.register([
+      {
+        name: 'NATS_CLIENT',
+        transport: Transport.NATS,
+        options: {
+          servers: ['nats://localhost:4222'], 
+      }
+    }
+    ])
   ],
-  providers: [AuthService, NatsService],
+  providers: [AuthService],
   controllers: [AuthController],
   exports: [AuthService],
 })

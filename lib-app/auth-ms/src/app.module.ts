@@ -7,7 +7,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     AuthModule, ClientsModule.register([
       {
-        name: 'AUTH_SERVICE',
+        name: 'NATS_SERVICE',
         transport: Transport.NATS,
         options: {
           servers: ['nats://localhost:4222'], 

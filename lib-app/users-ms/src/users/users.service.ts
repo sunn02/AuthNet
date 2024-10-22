@@ -45,7 +45,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
   }
 
 //FindOne original
-  private async findOneWithoutBreaker(name: string) {
+async findOneWithoutBreaker(name: string) {
     const user = await this.user.findFirst({
       where: { name }
     });
@@ -60,24 +60,25 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     return user;
   }
 
-  async findOne(name: string): Promise<any> {
-    try {
-      return await this.breaker.fire(() => this.findOneWithoutBreaker(name)); // Aquí llamamos al Circuit Breaker
-    } catch (error) {
-      this.logger.error(`Error fetching user ${name}: ${error.message}`);
-      throw new RpcException({
-        message: `Error fetching user: ${error.message}`,
-        status: HttpStatus.SERVICE_UNAVAILABLE,
-      });
-    }
-  }
+  // async findOne(name: string): Promise<any> {
+  //   try {
+  //     console.log(name);
+  //     return await this.breaker.fire(() => this.findOneWithoutBreaker(name)); // Aquí llamamos al Circuit Breaker
+  //   } catch (error) {
+  //     this.logger.error(`Error fetching user ${name}: ${error.message}`);
+  //     throw new RpcException({
+  //       message: `Error fetching user: ${error.message}`,
+  //       status: HttpStatus.SERVICE_UNAVAILABLE,
+  //     });
+  //   }
+  // }
 
   async update(name: string, updateUserDto: UpdateUserDto) {
 
     const { name: __, ...data } = updateUserDto;
     //En caso que el usuario no exista
 
-    await this.findOne(name);
+    await this.findOneWithoutBreaker(name);
 
     return this.user.update({
       where: { name },
@@ -86,7 +87,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
   }
 
   async remove(name: string) {
-    await this.findOne(name);
+    await this.findOneWithoutBreaker(name);
     
     return this.user.delete({
       where: {name}
