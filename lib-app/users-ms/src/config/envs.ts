@@ -1,29 +1,16 @@
-// Configuracion de variables de entorno
-
 import 'dotenv/config';
-import * as joi from 'joi';
+import * as Joi from 'joi';
 
-interface EnvVars {
-    PORT: number;
-    DATABASE_URL: string;
-}
+const envSchema = Joi.object({
+    PORT: Joi.number().default(3000),
+    }).unknown(true);
 
-const envsSchema = joi.object({
-    PORT: joi.number().required(),
-    DATABASE_URL: joi.string().required(),
-})
+    const { error, value: envVars } = envSchema.validate(process.env);
 
-.unknown(true);
+    if (error) {
+    throw new Error(`Config validation error: ${error.message}`);
+    }
 
-const { error, value} = envsSchema.validate(process.env);
-
-if ( error ) {
-    throw new Error(`Congig validation error: ${ error.message }`);
-}
-
-const envVars : EnvVars = value;
-
-export const envs = {
+    export const envs = {
     port: envVars.PORT,
-    databaseUrl: envVars.DATABASE_URL,
-}
+};

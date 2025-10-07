@@ -1,64 +1,58 @@
-import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaClient } from '@prisma/client';
 import { RpcException } from '@nestjs/microservices';
 import CircuitBreaker = require('opossum');
+import { User } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class UsersService extends PrismaClient implements OnModuleInit {
+// export class UsersService implements OnModuleInit {
+export class UsersService {
 
   private readonly logger = new Logger('UsersService');
   private breaker: CircuitBreaker;
 
-  constructor() {
-    super();
-  }
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+  ) {}
 
-  onModuleInit() {
-    this.$connect();
-    this.logger.log('Database connected');
-    this.breaker = new CircuitBreaker(this.findOneWithoutBreaker.bind(this), {
-      timeout: 5000, // Tiempo máximo de espera antes de considerar fallida la llamada
-      errorThresholdPercentage: 50, // 50% de fallos para abrir el circuito
-      resetTimeout: 10000, // Tiempo antes de reintentar
-    });
+  // onModuleInit() {
+  //   this.$connect();
+  //   this.logger.log('Database connected');
+  //   this.breaker = new CircuitBreaker(this.findOneWithoutBreaker.bind(this), {
+  //     timeout: 5000, // Tiempo máximo de espera antes de considerar fallida la llamada
+  //     errorThresholdPercentage: 50, // 50% de fallos para abrir el circuito
+  //     resetTimeout: 10000, // Tiempo antes de reintentar
+  //   });
 
-    this.breaker.on('open', () => this.logger.warn('Circuito abierto - Deteniendo llamadas'));
-    this.breaker.on('halfOpen', () => this.logger.log('Circuito medio abierto - Reintentando...'));
-    this.breaker.on('close', () => this.logger.log('Circuito cerrado - Llamadas restauradas'));
+  //   this.breaker.on('open', () => this.logger.warn('Circuito abierto - Deteniendo llamadas'));
+  //   this.breaker.on('halfOpen', () => this.logger.log('Circuito medio abierto - Reintentando...'));
+  //   this.breaker.on('close', () => this.logger.log('Circuito cerrado - Llamadas restauradas'));
   
-  }
+  // }
 
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.user.create({
-      data: createUserDto
-    });
-
-    this.logger.log(`Usuario creado: ${JSON.stringify(user)}`);
-    return user;
+const user = new User();
+    user.name = createUserDto.name;
+    user.password = createUserDto.password;
+    return await this.userRepository.save(user);
   }
 
   findAll() {
-    return this.user.findMany({});
+    return this.userRepository.find();
   }
 
-//FindOne original
-async findOneWithoutBreaker(name: string) {
-    const user = await this.user.findFirst({
-      where: { name }
-    });
-    
-    if ( !user ){
-      throw new RpcException({
-          message:`User with name #${ name } not found`,
-          status: HttpStatus.BAD_REQUEST
-      });
+  //FindOne original
+  async findOneWithoutBreaker(id: number) {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      return user;
     }
-
-    return user;
-  }
 
   // async findOne(name: string): Promise<any> {
   //   try {
@@ -73,24 +67,16 @@ async findOneWithoutBreaker(name: string) {
   //   }
   // }
 
-  async update(name: string, updateUserDto: UpdateUserDto) {
-
-    const { name: __, ...data } = updateUserDto;
-    //En caso que el usuario no exista
-
-    await this.findOneWithoutBreaker(name);
-
-    return this.user.update({
-      where: { name },
-      data: updateUserDto,     
-    });
+  async update(id: number, updatedUser: UpdateUserDto): Promise<User>{
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+      await this.userRepository.update({ id }, updatedUser);
+      return user;
   }
 
-  async remove(name: string) {
-    await this.findOneWithoutBreaker(name);
-    
-    return this.user.delete({
-      where: {name}
-    });
+  async remove(id: number) {    
+    return this.userRepository.delete(id)
   }
 }

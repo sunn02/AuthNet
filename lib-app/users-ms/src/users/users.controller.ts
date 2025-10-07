@@ -8,7 +8,7 @@ import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // @Post()
+  @Post()
   @MessagePattern({ cmd: 'create_user'}) 
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -21,14 +21,14 @@ export class UsersController {
   }
 
   // @Get(':name')
-  // @Get(':id')
+  @Get(':id')
 @MessagePattern({ cmd: 'find_one' })
-async findOne(@Payload('name') name: string) {
-  console.log('Buscando usuario con nombre:', name);
+async findOne(@Payload('id') id: number) {
+  console.log('Buscando usuario con id:', id);
   try {
-    const user = await this.usersService.findOneWithoutBreaker(name);
+    const user = await this.usersService.findOneWithoutBreaker(id);
     if (!user) {
-      return { error: `Usuario con nombre #${name} no encontrado` };
+      return { error: `Usuario con id #${id} no encontrado` };
     }
     return user;
   } catch (error) {
@@ -43,13 +43,13 @@ async findOne(@Payload('name') name: string) {
   @MessagePattern({ cmd: 'update_user'})
   update(@Payload() updateUserDto: UpdateUserDto,){
     // @Param('id', ParseIntPipe) id: number,
-    return this.usersService.update(updateUserDto.name, updateUserDto);
+    return this.usersService.update(updateUserDto.id, updateUserDto);
   }
 
   // @Delete(':name')
   // @Delete(':id')
   @MessagePattern({ cmd: 'delete_user'})
-  remove(@Payload('name') name: string) {
-    return this.usersService.remove( name );
+  remove(@Payload('id') id: number) {
+    return this.usersService.remove( id );
   }
 }

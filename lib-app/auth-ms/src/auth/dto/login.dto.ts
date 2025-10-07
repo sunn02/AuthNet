@@ -2,10 +2,10 @@ import { IsString, IsNotEmpty } from 'class-validator';
 
 export class LoginDto {
   @IsString()
-  @IsNotEmpty() // Asegura que el campo no esté vacío
+  @IsNotEmpty() 
   username: string;
 
   @IsString()
-  @IsNotEmpty() // Asegura que el campo no esté vacío
+  @IsNotEmpty() 
   password: string;
 }
