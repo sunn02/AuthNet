@@ -9,5 +9,12 @@ export class User {
     name: string;
 
     @Column()
-    password: string;
+    password: string;    
+    
+    
+  @Column({ unique: true })
+    email: string;    
+    
+    @Column()
+    phoneNo: string;
 }
