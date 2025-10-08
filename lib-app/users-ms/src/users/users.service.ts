@@ -1,4 +1,10 @@
-import { HttpStatus, Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RpcException } from '@nestjs/microservices';
@@ -10,7 +16,6 @@ import { Repository } from 'typeorm';
 @Injectable()
 // export class UsersService implements OnModuleInit {
 export class UsersService {
-
   private readonly logger = new Logger('UsersService');
   private breaker: CircuitBreaker;
 
@@ -30,14 +35,15 @@ export class UsersService {
   //   this.breaker.on('open', () => this.logger.warn('Circuito abierto - Deteniendo llamadas'));
   //   this.breaker.on('halfOpen', () => this.logger.log('Circuito medio abierto - Reintentando...'));
   //   this.breaker.on('close', () => this.logger.log('Circuito cerrado - Llamadas restauradas'));
-  
+
   // }
 
-
   async create(createUserDto: CreateUserDto) {
-const user = new User();
+    const user = new User();
     user.name = createUserDto.name;
     user.password = createUserDto.password;
+    user.email = createUserDto.email;
+    user.phoneNo = createUserDto.phoneNo;
     return await this.userRepository.save(user);
   }
 
@@ -46,20 +52,28 @@ const user = new User();
   }
 
   //FindOne original
-  async findOneWithoutBreaker(id: number) {
-      const user = await this.userRepository.findOne({ where: { id } });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      return user;
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
+    return user;
+  }
 
-  // async findOne(name: string): Promise<any> {
+  async findById(id: number) {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  // async findOne(email: string): Promise<any> {
   //   try {
-  //     console.log(name);
-  //     return await this.breaker.fire(() => this.findOneWithoutBreaker(name)); // Aquí llamamos al Circuit Breaker
+  //     console.log(email);
+  //     return await this.breaker.fire(() => this.findOneWithoutBreaker(email)); // Aquí llamamos al Circuit Breaker
   //   } catch (error) {
-  //     this.logger.error(`Error fetching user ${name}: ${error.message}`);
+  //     this.logger.error(`Error fetching user ${email}: ${error.message}`);
   //     throw new RpcException({
   //       message: `Error fetching user: ${error.message}`,
   //       status: HttpStatus.SERVICE_UNAVAILABLE,
@@ -67,16 +81,16 @@ const user = new User();
   //   }
   // }
 
-  async update(id: number, updatedUser: UpdateUserDto): Promise<User>{
-      const user = await this.userRepository.findOne({ where: { id } });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-      await this.userRepository.update({ id }, updatedUser);
-      return user;
+  async update(id: number, updatedUser: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userRepository.update({ id }, updatedUser);
+    return user;
   }
 
-  async remove(id: number) {    
-    return this.userRepository.delete(id)
+  async remove(id: number) {
+    return this.userRepository.delete(id);
   }
 }
