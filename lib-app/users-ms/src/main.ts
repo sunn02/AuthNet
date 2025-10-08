@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { envs } from './config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
@@ -15,15 +14,17 @@ async function bootstrap() {
     })
   ); 
 
+  
+
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,
     options: {
-      url: 'nats://localhost:4222', 
+      servers: [process.env.NATS_SERVERS], 
     },
   });
   await app.startAllMicroservices(); 
   await app.listen(3001);
 
-  logger.log(`Users Microservice running on port ${ envs.port }`)
+  logger.log(`Users Microservice running on port 3001`)
 }
 bootstrap();
