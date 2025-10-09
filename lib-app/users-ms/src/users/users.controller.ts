@@ -34,7 +34,7 @@ export class UsersController {
       return user;
     } catch (error) {
       console.error('Error en la búsqueda del usuario:', error);
-      return { error: error.message || 'Error interno al buscar el usuario' }; // Respuesta clara de error
+      return { error: error.message || 'Error interno al buscar el usuario' };
     }
   }
 

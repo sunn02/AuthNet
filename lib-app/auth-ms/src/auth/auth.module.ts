@@ -4,6 +4,9 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './helpers/local.strategy';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -17,12 +20,16 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: [ process.env.NATS_SERVERS ], 
+          servers: ['nats://localhost:4222' ], 
       }
     }
-    ])
+    ]),
+    PassportModule,
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, LocalStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

@@ -1,12 +1,15 @@
 
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Request, Controller, Post, HttpCode, HttpStatus, UseGuards, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @UseGuards(AuthGuard('local'))
   @Post('login')
   @HttpCode(HttpStatus.OK)
   signIn(@Body() loginDto: LoginDto) {
@@ -18,16 +21,17 @@ export class AuthController {
     return this.authService.signIn(user);
   }
 
-  @Post('signUp')
+  @Post('register')
   @HttpCode(HttpStatus.OK)
-  signUp(@Body() registerDto: RegisterDTO) {
+  register(@Body() registerDto: RegisterDTO) {
     const newUser = {
       email: registerDto.email,
       password: registerDto.password,
       username: registerDto.username,
-      phoneNo: registerDto.phoneNo
+      phoneNo: registerDto.phoneNo,
+      role: registerDto.role
     };
     console.log('Registrando usuario:', newUser);
-    return this.authService.register(newUser);
+    return this.authService.signUp(newUser);
   }
 }

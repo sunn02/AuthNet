@@ -55,7 +55,7 @@ export class AuthService {
   }
 
 
-  async register(registerDto: RegisterDTO): Promise<any> {
+  async signUp(registerDto: RegisterDTO): Promise<any> {
 
     try {
         const existingUser = await firstValueFrom(
@@ -75,6 +75,7 @@ export class AuthService {
             email: registerDto.email,
             password: hashPass,
             phoneNo: registerDto.phoneNo,
+            role: registerDto.role,
           },
         ),
       );

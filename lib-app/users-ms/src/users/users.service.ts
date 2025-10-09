@@ -14,7 +14,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
-// export class UsersService implements OnModuleInit {
 export class UsersService {
   private readonly logger = new Logger('UsersService');
   private breaker: CircuitBreaker;
@@ -23,27 +22,14 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  // onModuleInit() {
-  //   this.$connect();
-  //   this.logger.log('Database connected');
-  //   this.breaker = new CircuitBreaker(this.findOneWithoutBreaker.bind(this), {
-  //     timeout: 5000, // Tiempo máximo de espera antes de considerar fallida la llamada
-  //     errorThresholdPercentage: 50, // 50% de fallos para abrir el circuito
-  //     resetTimeout: 10000, // Tiempo antes de reintentar
-  //   });
-
-  //   this.breaker.on('open', () => this.logger.warn('Circuito abierto - Deteniendo llamadas'));
-  //   this.breaker.on('halfOpen', () => this.logger.log('Circuito medio abierto - Reintentando...'));
-  //   this.breaker.on('close', () => this.logger.log('Circuito cerrado - Llamadas restauradas'));
-
-  // }
-
   async create(createUserDto: CreateUserDto) {
     const user = new User();
     user.name = createUserDto.name;
     user.password = createUserDto.password;
     user.email = createUserDto.email;
     user.phoneNo = createUserDto.phoneNo;
+    user.role = createUserDto.role;
+
     return await this.userRepository.save(user);
   }
 
@@ -51,7 +37,6 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  //FindOne original
   async findByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
     if (!user) {
@@ -67,19 +52,6 @@ export class UsersService {
     }
     return user;
   }
-
-  // async findOne(email: string): Promise<any> {
-  //   try {
-  //     console.log(email);
-  //     return await this.breaker.fire(() => this.findOneWithoutBreaker(email)); // Aquí llamamos al Circuit Breaker
-  //   } catch (error) {
-  //     this.logger.error(`Error fetching user ${email}: ${error.message}`);
-  //     throw new RpcException({
-  //       message: `Error fetching user: ${error.message}`,
-  //       status: HttpStatus.SERVICE_UNAVAILABLE,
-  //     });
-  //   }
-  // }
 
   async update(id: number, updatedUser: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });

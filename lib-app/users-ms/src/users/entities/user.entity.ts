@@ -17,4 +17,7 @@ export class User {
     
     @Column()
     phoneNo: string;
+
+    @Column()
+    role: string; // e.g., 'admin', 'user', etc.
 }

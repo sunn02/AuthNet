@@ -25,12 +25,11 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,
     options: {
-      servers: [ process.env.NATS_SERVERS ],  
+      servers: [ 'nats://localhost:4222' ],  
     },
   });
 
   await app.startAllMicroservices();
-
   await app.listen(3002);
   
   logger.log(`Auth Microservice running on port 3002`);
