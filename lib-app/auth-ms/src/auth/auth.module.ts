@@ -20,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
         name: 'NATS_CLIENT',
         transport: Transport.NATS,
         options: {
-          servers: ['nats://localhost:4222' ], 
+          servers: ['nats://nats:4222' ], 
       }
     }
     ]),

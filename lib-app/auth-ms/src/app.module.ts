@@ -10,7 +10,7 @@ import { AuthModule } from './auth/auth.module';
         name: 'NATS_SERVICE',
         transport: Transport.NATS,
         options: {
-          servers: ['nats://localhost:4222'], 
+          servers: ['nats://nats:4222'], 
         },
       },
     ]),
